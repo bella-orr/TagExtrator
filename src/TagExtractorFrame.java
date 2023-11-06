@@ -37,7 +37,6 @@ public class TagExtractorFrame extends JFrame
 
 
 
-
     public TagExtractorFrame()
     {
         mainPnl = new JPanel();
@@ -194,17 +193,29 @@ public class TagExtractorFrame extends JFrame
 
                 System.out.println(stopWords);
 
+                getFile();
+
+                wordFrequency.keySet().removeAll(stopWords);
+
+                System.out.println(wordFrequency);
+
 
             }
+
             else
             {
                 tagFrequencyArea.append("You must choose a file. Program terminating.");
                 System.exit(0);
             }
-        } catch (FileNotFoundException e) {
+        }
+
+        catch (FileNotFoundException e)
+        {
             tagFrequencyArea.append("File not found.");
             e.printStackTrace();
-        } catch (IOException e)
+        }
+
+        catch (IOException e)
         {
             e.printStackTrace();
         }
