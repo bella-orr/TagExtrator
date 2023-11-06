@@ -211,6 +211,8 @@ public class TagExtractorFrame extends JFrame
 
                 tagFrequencyArea.append(str.toString());
 
+                writeFile();
+
 
             }
 
@@ -232,6 +234,24 @@ public class TagExtractorFrame extends JFrame
             e.printStackTrace();
         }
 
+    }
+
+    public void writeFile()
+    {
+        try
+        {
+            FileWriter newFile = new FileWriter("FrequencyWriter.txt");
+            String text = tagFrequencyArea.getText();
+
+            newFile.write(text);
+            newFile.close();
+
+            tagFrequencyArea.append("\n File Written.");
+        }
+        catch(IOException e)
+        {
+            e.printStackTrace();
+        }
     }
 
 
