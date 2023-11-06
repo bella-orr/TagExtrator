@@ -1,10 +1,12 @@
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
-import java.io.BufferedReader;
-import java.io.BufferedWriter;
-import java.io.File;
-import java.io.FileReader;
+import java.io.*;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.util.*;
+
+import static java.nio.file.StandardOpenOption.CREATE;
 
 public class TagExtractorFrame extends JFrame
 {
@@ -22,6 +24,15 @@ public class TagExtractorFrame extends JFrame
     //JButtons
     JButton chooseFileBtn;
     JButton quitBtn;
+
+    //Map
+    Map<String, Integer> wordFrequency = new HashMap<>();
+
+    JFileChooser chooser = new JFileChooser();
+    File selectedFile;
+    String line = "";
+    Scanner con = new Scanner(System.in);
+
 
 
 
@@ -79,17 +90,75 @@ public class TagExtractorFrame extends JFrame
 
     private void getFile()
     {
-        JFileChooser fileChooser = new JFileChooser();
-
-        int response = fileChooser.showOpenDialog(null); //selects file to open
-
-        if(response == JFileChooser.APPROVE_OPTION)
+        try
         {
-            File file = fileChooser.getSelectedFile();
-            String filePath = file.getName();
-            tagFrequencyArea.append("File name: " + filePath);
-        }
+            File workingDirectory = new File(System.getProperty("user.dir"));
+            chooser.setCurrentDirectory(workingDirectory);
 
+            if (chooser.showOpenDialog(null) == JFileChooser.APPROVE_OPTION) {
+                selectedFile = chooser.getSelectedFile();
+
+                Path file = selectedFile.toPath();
+
+                tagFrequencyArea.append("File name: " + selectedFile.getName());
+
+                InputStream in = new BufferedInputStream(Files.newInputStream(file, CREATE));
+                BufferedReader reader = new BufferedReader(new InputStreamReader(in));
+
+                line = reader.readLine();
+
+                while (line!= null)
+                {
+
+                    if(!line.trim().equals(""))
+                    {
+                        String [] words = line.split(" ");
+
+                        for (String w : words)
+                        {
+                            if(w == null || w.trim().equals(""))
+                            {
+                                continue;
+                            }
+
+                            String processedWord = w.toLowerCase();
+                            processedWord = processedWord.replace(",","");
+                            processedWord = processedWord.replace(".","");
+                            processedWord = processedWord.replace("!","");
+                            processedWord = processedWord.replace("?","");
+
+                            if(wordFrequency.containsKey(processedWord))
+                            {
+                                wordFrequency.put(processedWord, wordFrequency.get(processedWord)+1);
+                            }
+
+                            else
+                            {
+                                wordFrequency.put(processedWord,1);
+                            }
+                        }
+                    }
+
+
+                    line = reader.readLine();
+
+                }
+
+                System.out.println(wordFrequency);
+
+
+            }
+            else
+            {
+                tagFrequencyArea.append("You must choose a file. Program terminating.");
+                System.exit(0);
+            }
+        } catch (FileNotFoundException e) {
+            tagFrequencyArea.append("File not found.");
+            e.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
 
     }
 
