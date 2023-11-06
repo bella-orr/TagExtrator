@@ -101,7 +101,7 @@ public class TagExtractorFrame extends JFrame
 
                 Path file = selectedFile.toPath();
 
-                tagFrequencyArea.append("File name: " + selectedFile.getName());
+                tagFrequencyArea.append("\nFile name: " + selectedFile.getName());
 
                 InputStream in = new BufferedInputStream(Files.newInputStream(file, CREATE));
                 BufferedReader reader = new BufferedReader(new InputStreamReader(in));
@@ -123,10 +123,7 @@ public class TagExtractorFrame extends JFrame
                             }
 
                             String processedWord = w.toLowerCase();
-                            processedWord = processedWord.replace(",","");
-                            processedWord = processedWord.replace(".","");
-                            processedWord = processedWord.replace("!","");
-                            processedWord = processedWord.replace("?","");
+                            processedWord = processedWord.replaceAll("[^a-zA-Z]", "");
 
 
                             if(wordFrequency.containsKey(processedWord))
@@ -147,6 +144,7 @@ public class TagExtractorFrame extends JFrame
                 }
 
                 System.out.println(wordFrequency);
+
 
 
             }
@@ -178,7 +176,7 @@ public class TagExtractorFrame extends JFrame
 
                 Path file = selectedFile.toPath();
 
-                tagFrequencyArea.append("File name: " + selectedFile.getName());
+                tagFrequencyArea.append("Stop Word File Name: " + selectedFile.getName());
 
                 InputStream in = new BufferedInputStream(Files.newInputStream(file, CREATE));
                 BufferedReader reader = new BufferedReader(new InputStreamReader(in));
@@ -198,6 +196,20 @@ public class TagExtractorFrame extends JFrame
                 wordFrequency.keySet().removeAll(stopWords);
 
                 System.out.println(wordFrequency);
+
+                tagFrequencyArea.append("\n");
+                tagFrequencyArea.append("\n");
+
+                StringBuilder str = new StringBuilder();
+                for (String key : wordFrequency.keySet())
+                {
+                    str.append(key);
+                    str.append("=");
+                    str.append(wordFrequency.get(key));
+                    str.append("\n");
+                }
+
+                tagFrequencyArea.append(str.toString());
 
 
             }
