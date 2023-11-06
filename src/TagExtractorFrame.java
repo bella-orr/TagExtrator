@@ -26,7 +26,7 @@ public class TagExtractorFrame extends JFrame
     JButton quitBtn;
 
     //Map
-    Map<String, Integer> wordFrequency = new HashMap<>();
+    Map<String, Integer> wordFrequency = new TreeMap<>();
 
     Set<String> stopWords = new TreeSet<>();
 
