@@ -28,10 +28,12 @@ public class TagExtractorFrame extends JFrame
     //Map
     Map<String, Integer> wordFrequency = new HashMap<>();
 
+    Set<String> stopWords = new TreeSet<>();
+
     JFileChooser chooser = new JFileChooser();
     File selectedFile;
     String line = "";
-    Scanner con = new Scanner(System.in);
+
 
 
 
@@ -77,7 +79,7 @@ public class TagExtractorFrame extends JFrame
         buttonPnl.setLayout(new GridLayout(1,2));
 
         chooseFileBtn = new JButton("Choose File");
-        chooseFileBtn.addActionListener((ActionEvent ae) -> getFile());
+        chooseFileBtn.addActionListener((ActionEvent ae) -> getStop());
 
         quitBtn = new JButton("Quit");
         quitBtn.addActionListener((ActionEvent ae) -> System.exit(0));
@@ -127,6 +129,7 @@ public class TagExtractorFrame extends JFrame
                             processedWord = processedWord.replace("!","");
                             processedWord = processedWord.replace("?","");
 
+
                             if(wordFrequency.containsKey(processedWord))
                             {
                                 wordFrequency.put(processedWord, wordFrequency.get(processedWord)+1);
@@ -156,7 +159,53 @@ public class TagExtractorFrame extends JFrame
         } catch (FileNotFoundException e) {
             tagFrequencyArea.append("File not found.");
             e.printStackTrace();
-        } catch (IOException e) {
+        } catch (IOException e)
+        {
+            e.printStackTrace();
+        }
+
+    }
+
+    private void getStop()
+    {
+        try
+        {
+            File workingDirectory = new File(System.getProperty("user.dir"));
+            chooser.setCurrentDirectory(workingDirectory);
+
+            if (chooser.showOpenDialog(null) == JFileChooser.APPROVE_OPTION)
+            {
+                selectedFile = chooser.getSelectedFile();
+
+                Path file = selectedFile.toPath();
+
+                tagFrequencyArea.append("File name: " + selectedFile.getName());
+
+                InputStream in = new BufferedInputStream(Files.newInputStream(file, CREATE));
+                BufferedReader reader = new BufferedReader(new InputStreamReader(in));
+
+                line = reader.readLine();
+
+                while (line!= null)
+                {
+                    stopWords.add(line);
+                    line = reader.readLine();
+                }
+
+                System.out.println(stopWords);
+
+
+            }
+            else
+            {
+                tagFrequencyArea.append("You must choose a file. Program terminating.");
+                System.exit(0);
+            }
+        } catch (FileNotFoundException e) {
+            tagFrequencyArea.append("File not found.");
+            e.printStackTrace();
+        } catch (IOException e)
+        {
             e.printStackTrace();
         }
 
@@ -164,3 +213,4 @@ public class TagExtractorFrame extends JFrame
 
 
 }
+
